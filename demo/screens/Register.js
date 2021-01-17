@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import{View , Text , StyleSheet,Dimensions,TextInput, Button, KeyboardAvoidingView, Alert, Keyboard} from 'react-native';
+import{View , Text , StyleSheet,Dimensions,TextInput, Button, KeyboardAvoidingView,TouchableWithoutFeedback, Alert, Keyboard} from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 import {TapGestureHandler , State} from 'react-native-gesture-handler';
+import{Container, Header,Content,ListItem,CheckBox,Body} from 'native-base';
 import Home from './Home';
 import Index from './login';
 import Svg,{Image,Circle,ClipPath} from 'react-native-svg';
@@ -25,7 +26,6 @@ const validateForm = errors => {
 	return valid;
 };
 
-
 export default class Register extends React.Component {
     constructor(props){
         super(props);
@@ -37,6 +37,7 @@ export default class Register extends React.Component {
             cpassword:' ',
             email:null,
             pnumber:'',
+            isDriver:false
           //  errors: {
 			//	fname: "",
 			//	email: "",
@@ -70,24 +71,24 @@ export default class Register extends React.Component {
     
     async handleSignUp(){
         try{
-            const {cpassword ,email,fname,lname,password,pnumber}=this.state;
+            const {cpassword ,email,fname,lname,password,pnumber,isDriver}=this.state;
             console.log(cpassword,email)
-            if(cpassword!==password){
-                Alert.alert('Password is not same as confirm password ');
-               
+            if(fname==null){
+                Alert.alert('Please enter first name '); 
             }
             else if(!validEmailRegex.test(email)){
                 Alert.alert('email invalid type ');
             }
-            else if (fname==null){
-                
-                Alert.alert('Please enter first name ');
+            else if(cpassword!==password){
+                Alert.alert('Password is not same as confirm password ');
+               
+               
             }else{
                 Alert.alert(fname);
-                const result =await axios.post('/auth/signup',{email ,fname,lname, password});
+                const result =await axios.post('/auth/signup',{email ,fname,lname, password,pnumber,isDriver});
                 console.log(result)
 
-                Alert.alert('User Created Successf')
+                Alert.alert('User Created Successfull')
             }
             Keyboard.dismiss();
     
@@ -110,9 +111,10 @@ export default class Register extends React.Component {
       }
    return (
     
-    
-    <View style={{flex:1 , backgroundColor:'white',justifyContent:'flex-end'}}>
-                  
+    <KeyboardAvoidingView behavior={Platform.OS==="ios"?"padding":"height"} style={{flex:1 , backgroundColor:'white'}}>
+    <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
+   <View>
+                     
         <TextInput
             textAlign={'center'}
             /*backgroundColor='white'*/
@@ -160,12 +162,26 @@ export default class Register extends React.Component {
         <TextInput
             textAlign={'center'}
             /*backgroundColor='white'*/
-           
+           keyboardType="numeric"
             placeholder="Phone Number"
             style={styles.textInput}
             placeholderTextColor='black'    
             onChangeText={(value)=>this.setState({pnumber:value})}
         />
+         <ListItem>
+        <CheckBox 
+            checked={this.state.isDriver}
+            //isDriver={this.state.isDriver}
+            onPress={()=>this.setState({isDriver:!this.state.isDriver})}
+            //onValueChange={(value)=>this.setState({isDriver:value}),setSelection}
+        />
+        <Body>
+        <Text> Please Select if you are a Driver</Text>
+        </Body>
+        </ListItem>
+        
+        
+        
         <Animated.View style={styles.button}>
            <Button onPress={this.handleSignUp}title='Create User'> </Button>
         </Animated.View>
@@ -173,8 +189,11 @@ export default class Register extends React.Component {
            <Button onPress={()=>this.setState({isIndex:true})}title='Back'> </Button>
         </Animated.View>
 
-      
+        
         </View>
+        </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+    
       
         
     );
@@ -183,9 +202,10 @@ export default class Register extends React.Component {
 
 const styles=StyleSheet.create({
     container: {
-        flex: 1,
+       // flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+       // flexDirection:'row'
+       // justifyContent: 'center'
     },
     button:{
         backgroundColor: 'white',

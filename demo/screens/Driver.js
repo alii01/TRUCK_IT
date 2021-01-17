@@ -22,6 +22,8 @@ export default class Driver extends React.Component {
       
       pointCoords: [],
       lookingForPassenger:false,
+      reserved:false,
+      isArrived:false
       
 
     };
@@ -78,11 +80,12 @@ export default class Driver extends React.Component {
       });
      
     
-      this.socket= socketIO.connect("http://192.168.0.121:3000");
+      this.socket= socketIO.connect("http://192.168.0.105:3000");
       this.socket.on("connect",()=>{
         this.socket.emit("lookingForPassenger");
       });
       this.socket.on("taxiRequest",routeResponse=>{
+        console.log('route response')
         console.log(routeResponse);
       
         this.setState({lookingForPassengers:false,passengerFound:true,routeResponse});
@@ -97,6 +100,7 @@ export default class Driver extends React.Component {
       latitude:this.state.latitude,
       longitude:this.state.longitude
     });
+    
 
   }
 
@@ -125,8 +129,12 @@ export default class Driver extends React.Component {
       );
     }
 
-    if (this.state.passengerFound) {
+    if (this.state.passengerFound && this.state.reserved) {
       passengerSearchText = "FOUND PASSENGER! ACCEPT RIDE?";
+      bottomButtonFunction=this.acceptPassengerRequest;
+    }
+    if (this.state.passengerFound && this.state.reserved== false) {
+      passengerSearchText = "FOUND PASSENGER! ACCEPT RIDE? chalja bc ";
       bottomButtonFunction=this.acceptPassengerRequest;
     }
    

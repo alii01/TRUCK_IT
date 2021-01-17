@@ -115,8 +115,11 @@ export default class login extends Component {
         try{
             const {email , password}=this.state;
             const result =await axios.post('/auth/login',{email , password});
-            Alert.alert('',result.data.token);//only for debugging showing token
-            this.props.handleChangeToken(result.data.token);
+           // Alert.alert('',result.data.token);//only for debugging showing token
+           console.log('checking isdriver');
+           console.log(result.data.driverstat);
+            this.props.handleChangeToken(result.data);
+           // this.props.handleChageDriver(result.data.driverstat);
              
         }catch(error){
             this.setState({errorMessage: error.response.data.errorMessage});

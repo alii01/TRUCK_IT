@@ -10,7 +10,9 @@ exports.loginUser=async (req , res)=>{
         const isPasswordCorrect = await bcrypt.compare(password,user.password);
         if (isPasswordCorrect){
             const token = jwt.sign(user.email,jwtSecret);
-            return res.json({token:token});
+            const driverstat=user.isDriver;
+            //console.log(driverstat)
+            return res.json({token:token,driverstat:driverstat});
         }else{
          //change 2:21 1/15/2021
 
@@ -23,7 +25,7 @@ exports.loginUser=async (req , res)=>{
 }; 
 exports.createUser=async (req,res)=>{
     try {//email ,fname,lname, password,pnumber
-        const {email,fname ,lname, password}= req.body;
+        const {email,fname ,lname, password,pnumber,isDriver}= req.body;
         console.log(email)
         console.log(fname)
         if(await User.findOne({email})){
@@ -47,7 +49,9 @@ exports.createUser=async (req,res)=>{
             firstName: fname,
             lastName:lname,
             email:email,
-            password:hashedPassword
+            password:hashedPassword,
+            PhoneNumber:pnumber,
+            isDriver:isDriver
             
                      
         });

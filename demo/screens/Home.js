@@ -21,8 +21,8 @@ export default class Home extends React.Component {
   constructor(props){
     super(props);
     this.state={
-      latitude: 0,
-      longitude:0,
+      latitude: null,
+      longitude:null,
       error: null,
       destination: "",
       predictions: [],
@@ -39,7 +39,7 @@ export default class Home extends React.Component {
   }
   
   componentDidMount(){
-    navigator.geolocation.getCurrentPosition(position=>{
+     this.watchId=navigator.geolocation.watchPosition(position=>{
       this.setState({
         latitude:position.coords.latitude,
         longitude: position.coords.longitude,
@@ -54,6 +54,12 @@ export default class Home extends React.Component {
     );
    
   }
+
+  componentWillUnmount(){
+    navigator.geolocation.clearWatch(this.watchId)
+  }
+
+
   //Direction api call 
   async getRouteDirections(placeId, destinationName){
     try{
@@ -181,7 +187,7 @@ export default class Home extends React.Component {
 
   async requestDriver(){
     this.setState({lookingForDriver:true});
-    const socket = socketIO.connect("http://192.168.0.121:3000");
+    const socket = socketIO.connect("http://192.168.0.105:3000");
     socket.on("connect",()=>{
       console.log("client connection");
       
@@ -208,6 +214,10 @@ export default class Home extends React.Component {
     let getDriver=null;
     let findingDriverActIndicator=null;
     let driverMarker = null;
+
+    if(this.state.latitude===null) return null;
+
+
     if(this.state.driverIsOnTheWay){
       driverMarker=(<Marker
        coordinate={this.state.driverLocation} 

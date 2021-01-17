@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     firstName:{
         type:String,
-        required:false
+        required:true
     } ,
     lastName: {
          type:String
@@ -10,10 +10,19 @@ const userSchema = new mongoose.Schema({
     },
     email :{
         type: String,
-        required:false
+        required:true
     },
     password:{
         type:String,
+        required:true
+    },
+    PhoneNumber:{
+        type:String,
+        required:false
+
+    },
+    isDriver:{
+        type:Boolean,
         required:false
     }
   //  PhoneNumber:{

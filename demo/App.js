@@ -24,16 +24,24 @@ export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state={
-     isDriver: false,
+     isDriver: null,
      isPassenger: false,
      isReady:false,  /** to check if it ready to show the picture   */
       token:''
     };
     this.handleChangeToken=this.handleChangeToken.bind(this);
+   // this.handeChangeDriver=this.handleChangeDriver.bind(this);
   }
   handleChangeToken(token){
-    this.setState({token});
+    console.log(token.token)
+    this.setState({token:token.token});
+    this.setState({isDriver:token.driverstat});
+    
   }
+  // handleChangeDriver(isDriver){
+  //   console.log('yaha tk to aja yar ');
+  //   this.setState({isDriver});
+  // }
   
   async _loadAssetsAsync(){
     const imageAssets= cacheImages([
@@ -69,8 +77,7 @@ export default class App extends React.Component {
     if(this.state.isDriver){
       
       return<Driver />;
-    }
-    if(this.state.isPassenger){
+    }else if(!this.state.isDriver){
       return<Home/>;
     }
    return (
