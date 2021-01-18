@@ -76,7 +76,7 @@ export default class App extends React.Component {
 
     if(this.state.isDriver){
       
-      return<Driver />;
+      return<Driver props={true} propName={'tempVar'}/>;
     }else if(!this.state.isDriver){
       return<Home/>;
     }

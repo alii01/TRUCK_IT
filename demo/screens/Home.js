@@ -31,7 +31,9 @@ export default class Home extends React.Component {
       lookingForDriver:false,
       driverIsOnTheWay: false,
       selected2: undefined,
-      distance:''
+      distance:'',
+
+      fare:null
 
     };
     this.handlefareCalculation=this.handlefareCalculation.bind(this);
@@ -173,6 +175,13 @@ export default class Home extends React.Component {
             console.log("handle fare calc distance");
             console.log(distance);
             const result =await axios.post('/auth/fareCalculation',{'distance':distance.toString()});
+           // console.log('checking payment');
+            //console.log(result.data.fare);
+            this.setState({fare:result.data.fare});
+            console.log('checking payment');
+            console.log(result.data.fare);
+            
+
             //Alert.alert('',result.data.token);//only for debugging showing token
             //this.props.handleChangeToken(result.data.token);
              

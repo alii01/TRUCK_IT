@@ -16,6 +16,7 @@ io.on("connection" ,socket =>{
        passengerSocket=socket;
        console.log("Someone is looking for a taxi");
         if(taxiSocket!=null){
+            console.log(routeResponse);
             taxiSocket.emit("taxiRequest",routeResponse);
         }
         

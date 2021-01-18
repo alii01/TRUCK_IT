@@ -6,6 +6,7 @@ import MapView ,{Marker} from "react-native-maps";
  import {FontAwesome5} from '@expo/vector-icons'
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import {Container, Header , Content, Form , Item , Picker,Input } from 'native-base';
 //import { TouchableOpacity } from 'react-native-gesture-handler';
 import apiKey from '../google_api_key';
 import PolyLine from "@mapbox/polyline";
@@ -23,12 +24,14 @@ export default class Driver extends React.Component {
       pointCoords: [],
       lookingForPassenger:false,
       reserved:false,
-      isArrived:false
+      isArrived:false,
+      fare:110
       
 
     };
     this.acceptPassengerRequest=this.acceptPassengerRequest.bind(this);
     this.findPassengers= this.findPassengers.bind(this);
+    this.generateBilling=this.generateBilling.bind(this);
     this.socket=null;
     
   }
@@ -78,6 +81,9 @@ export default class Driver extends React.Component {
       this.setState({
         lookingForPassengers:true
       });
+      //checking tempVarcoming or not
+      //console.log('checking temp');
+      //console.log(this.props.props)
      
     
       this.socket= socketIO.connect("http://192.168.0.105:3000");
@@ -96,12 +102,16 @@ export default class Driver extends React.Component {
   }
   acceptPassengerRequest(){
     //send driver location to passenger
+    this.setState({reserved:true})
     this.socket.emit("driverLocation",{
       latitude:this.state.latitude,
       longitude:this.state.longitude
     });
     
 
+  }
+  generateBilling(){
+    this.setState({isArrived:true})
   }
 
  
@@ -113,7 +123,7 @@ export default class Driver extends React.Component {
     let findingPassengerActIndicator = null;
     let passengerSearchText = "FIND PASSENGERS 👥";
     let bottomButtonFunction = this.findPassengers;
-
+    let setBill= null;
 
 
 
@@ -130,12 +140,29 @@ export default class Driver extends React.Component {
     }
 
     if (this.state.passengerFound && this.state.reserved) {
+      passengerSearchText = "Press When Arrived";
+      //bottomButtonFunction=this.acceptPassengerRequest;
+      bottomButtonFunction=this.generateBilling;
+    }
+    if (this.state.passengerFound && this.state.reserved== false) {
       passengerSearchText = "FOUND PASSENGER! ACCEPT RIDE?";
       bottomButtonFunction=this.acceptPassengerRequest;
     }
-    if (this.state.passengerFound && this.state.reserved== false) {
-      passengerSearchText = "FOUND PASSENGER! ACCEPT RIDE? chalja bc ";
-      bottomButtonFunction=this.acceptPassengerRequest;
+   
+    if (this.state.reserved && this.state.isArrived){
+         setBill=(<Container style={styles.formstyle}>
+                <Content >
+                 
+                    <Item >
+                      <Text>{this.state.fare*3.5}</Text>
+                    </Item>
+
+                 
+                </Content>
+              </Container>
+         );
+      
+      
     }
    
     if(this.state.pointCoords.length>1){
@@ -188,7 +215,9 @@ export default class Driver extends React.Component {
           {marker}
           {startMarker}
           
+          
           </MapView>
+          {setBill}
           <BottomButton 
             onPressFunction= {bottomButtonFunction}
              buttonText={passengerSearchText}>
@@ -227,6 +256,18 @@ const styles = StyleSheet.create({
      marginRight:5,
      padding:5,
      backgroundColor:'white'
+  },
+  formstyle: {
+    //flex:1,
+    backgroundColor: "white",
+    //marginTop: "auto",
+    marginTop: 400,
+    marginBottom: 20,
+    padding: 15,
+    paddingLeft: 30,
+    paddingRight: 30,
+    alignSelf: "center",
+
   },
   suggestion:{
     backgroundColor:"white",

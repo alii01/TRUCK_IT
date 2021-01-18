@@ -73,5 +73,6 @@ exports.fareCalculation= async (req , res)=>{
 
     var fare = 50+(parseFloat(distance.distance.substring(0,distance.distance.length -3))*5);
     console.log(fare);
+    return res.json({fare:fare});
    
 }; 
